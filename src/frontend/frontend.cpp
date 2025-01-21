@@ -21,7 +21,7 @@ limitations under the License.
 
 #include <imguipack.h>
 
-#include <backend/backend.h>
+#include <core/controller.h>
 
 #include <res/fontIcons.h>
 
@@ -58,10 +58,10 @@ bool Frontend::isThereAnError() const {
     return false;
 }
 
-void Frontend::Display(const uint32_t& vCurrentFrame, const ImRect& vRect) {
+void Frontend::Display(const uint32_t &vCurrentFrame, const ImRect &vRect) {
     const auto context_ptr = ImGui::GetCurrentContext();
     if (context_ptr != nullptr) {
-        const auto& io = ImGui::GetIO();
+        const auto &io = ImGui::GetIO();
 
         m_DisplayRect = vRect;
 
@@ -69,12 +69,7 @@ void Frontend::Display(const uint32_t& vCurrentFrame, const ImRect& vRect) {
         ImGui::CustomStyle::ResetCustomId();
 
         m_drawMainMenuBar();
-        auto pos = m_DisplayRect.Min;
-        auto size = m_DisplayRect.GetSize();
-        auto content_size = ImGui::GetContentRegionAvail();
-        m_drawExpr(ImRect(ImGui::GetCursorScreenPos(), ImVec2(content_size.x, 100.0f)));
-        content_size = ImGui::GetContentRegionAvail();
-        m_drawCanvas(ImRect(ImGui::GetCursorScreenPos(), content_size));
+        m_drawCanvas();
         m_drawMainStatusBar();
 
         DrawDialogsAndPopups(vCurrentFrame, m_DisplayRect, context_ptr, {});
@@ -83,18 +78,19 @@ void Frontend::Display(const uint32_t& vCurrentFrame, const ImRect& vRect) {
     }
 }
 
-bool Frontend::DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool Frontend::DrawWidgets(const uint32_t &vCurrentFrame, ImGuiContext *vContextPtr, void *vUserDatas) {
     bool res = false;
     return res;
 }
 
-bool Frontend::DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool Frontend::DrawOverlays(const uint32_t &vCurrentFrame, const ImRect &vRect, ImGuiContext *vContextPtr,
+                            void *vUserDatas) {
     bool res = false;
     return res;
 }
 
 bool Frontend::DrawDialogsAndPopups(
-    const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
+        const uint32_t &vCurrentFrame, const ImRect &vRect, ImGuiContext *vContextPtr, void *vUserDatas) {
     if (m_ShowImGui) {
         ImGui::ShowDemoWindow(&m_ShowImGui);
     }
@@ -124,10 +120,14 @@ void Frontend::m_drawMainMenuBar() {
 
                 if (m_drawGrid || m_drawScales) {
                     if (ImGui::BeginMenu("Canvas")) {
-                        ImGui::SliderFloatDefaultCompact(250.0f, "Major step X", &m_canvas.getConfigRef().gridSize.x, 1.0f, 200.0f, 50.0f, 1.0f);
-                        ImGui::SliderFloatDefaultCompact(250.0f, "Major step Y", &m_canvas.getConfigRef().gridSize.y, 1.0f, 200.0f, 50.0f, 1.0f);
-                        ImGui::SliderFloatDefaultCompact(250.0f, "Subdivs X", &m_canvas.getConfigRef().gridSubdivs.x, 0.0f, 50.0f, 5.0f, 1.0f);
-                        ImGui::SliderFloatDefaultCompact(250.0f, "Subdivs Y", &m_canvas.getConfigRef().gridSubdivs.y, 0.0f, 50.0f, 5.0f, 1.0f);
+                        ImGui::SliderFloatDefaultCompact(250.0f, "Major step X", &m_canvas.getConfigRef().gridSize.x,
+                                                         1.0f, 200.0f, 50.0f, 1.0f);
+                        ImGui::SliderFloatDefaultCompact(250.0f, "Major step Y", &m_canvas.getConfigRef().gridSize.y,
+                                                         1.0f, 200.0f, 50.0f, 1.0f);
+                        ImGui::SliderFloatDefaultCompact(250.0f, "Subdivs X", &m_canvas.getConfigRef().gridSubdivs.x,
+                                                         0.0f, 50.0f, 5.0f, 1.0f);
+                        ImGui::SliderFloatDefaultCompact(250.0f, "Subdivs Y", &m_canvas.getConfigRef().gridSubdivs.y,
+                                                         0.0f, 50.0f, 5.0f, 1.0f);
                         ImGui::EndMenu();
                     }
                 }
@@ -144,7 +144,9 @@ void Frontend::m_drawMainMenuBar() {
 
         const auto label = ez::str::toStr("Dear ImGui %s (Docking)", ImGui::GetVersion());
         const auto size = ImGui::CalcTextSize(label.c_str());
-        ImGui::Spacing(ImGui::GetContentRegionAvail().x - size.x - ImGui::GetStyle().FramePadding.x * 2.0f);
+
+        Controller::Instance()->drawInput(ImGui::GetContentRegionAvail().x - size.x - ImGui::GetStyle().FramePadding.x * 2.0f);
+
         ImGui::Text("%s", label.c_str());
 
         ImGui::EndMainMenuBar();
@@ -156,7 +158,7 @@ void Frontend::m_drawMainStatusBar() {
         Messaging::Instance()->DrawStatusBar();
 
 #ifdef _DEBUG
-        const auto& io = ImGui::GetIO();
+        const auto &io = ImGui::GetIO();
         const auto fps = ez::str::toStr("%.1f ms/frame (%.1f fps)", 1000.0f / io.Framerate, io.Framerate);
         const auto size = ImGui::CalcTextSize(fps.c_str());
         ImGui::Spacing(ImGui::GetContentRegionAvail().x - size.x - ImGui::GetStyle().FramePadding.x * 2.0f);
@@ -167,18 +169,11 @@ void Frontend::m_drawMainStatusBar() {
     }
 }
 
-void Frontend::m_drawExpr(const ImRect& vRect) {
-    ImGui::SetNextWindowPos(vRect.Min);
-    ImGui::SetNextWindowSize(vRect.GetSize());
-    if (ImGui::Begin("ExprsWindow", nullptr, ImGuiWindowFlags_NoTitleBar)) {
-        
-    }
-    ImGui::End();
-}
-
-void Frontend::m_drawCanvas(const ImRect& vRect) {
-    ImGui::SetNextWindowPos(vRect.Min);
-    ImGui::SetNextWindowSize(vRect.GetSize());
+void Frontend::m_drawCanvas() {
+    const auto *viewport_ptr = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport_ptr->WorkPos);
+    ImGui::SetNextWindowSize(viewport_ptr->WorkSize);
+    ImGui::SetNextWindowViewport(viewport_ptr->ID);
     if (ImGui::Begin("CanvasWindow", nullptr, ImGuiWindowFlags_NoTitleBar)) {
         const auto content_size = ImGui::GetContentRegionAvail();
         if (m_canvas.begin("Canvas", content_size)) {
@@ -192,13 +187,13 @@ void Frontend::m_drawCanvas(const ImRect& vRect) {
                 m_canvas.getViewRef().set(content_size * 0.5f, 1.0f);
                 m_firstDraw = false;
             }
-            auto* draw_list_ptr = ImGui::GetWindowDrawList();
+            auto *draw_list_ptr = ImGui::GetWindowDrawList();
             if (draw_list_ptr != nullptr) {
             }
             m_canvas.end();
         }
     }
-    ImGui::End();    
+    ImGui::End();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +221,7 @@ bool Frontend::m_build() {
 //// CONFIGURATION ////////////////////////////////////
 ///////////////////////////////////////////////////////
 
-ez::xml::Nodes Frontend::getXmlNodes(const std::string& vUserDatas) {
+ez::xml::Nodes Frontend::getXmlNodes(const std::string &vUserDatas) {
     ez::xml::Node node;
     node.addChilds(ImGuiThemeHelper::Instance()->getXmlNodes("app"));
 #ifdef USE_PLACES_FEATURE
@@ -237,10 +232,11 @@ ez::xml::Nodes Frontend::getXmlNodes(const std::string& vUserDatas) {
     return node.getChildren();
 }
 
-bool Frontend::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
-    const auto& strName = vNode.getName();
-    const auto& strValue = vNode.getContent();
-    const auto& strParentName = vParent.getName();
+bool
+Frontend::setFromXmlNodes(const ez::xml::Node &vNode, const ez::xml::Node &vParent, const std::string &vUserDatas) {
+    const auto &strName = vNode.getName();
+    const auto &strValue = vNode.getContent();
+    const auto &strParentName = vParent.getName();
 
     if (strName == "places") {
 #ifdef USE_PLACES_FEATURE

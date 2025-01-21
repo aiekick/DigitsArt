@@ -33,16 +33,11 @@ class Frontend : public ez::xml::Config {
 private:
     bool m_ShowImGui = false;
     bool m_ShowMetric = false;
-    ImFont* m_ToolbarFontPtr = nullptr;
     ImRect m_DisplayRect = ImRect(ImVec2(0, 0), ImVec2(1280, 720));
-    bool m_ShowAboutDialog = false;          // show about dlg
-    bool m_SaveDialogIfRequired = false;     // open save options dialog (save / save as / continue without saving / cancel)
-    bool m_SaveDialogActionWasDone = false;  // if action was done by save options dialog
     ImCanvas m_canvas;
     bool m_firstDraw = true;
     bool m_drawGrid = true;
     bool m_drawScales = true;
-    std::vector<ImVec2> m_points;
 
 public:
     static bool sCentralWindowHovered;
@@ -71,8 +66,7 @@ private:
     bool m_build_themes();
     void m_drawMainMenuBar();
     void m_drawMainStatusBar();
-    void m_drawExpr(const ImRect& vRect);
-    void m_drawCanvas(const ImRect& vRect);
+    void m_drawCanvas();
 
 public:  // singleton
     static Frontend* Instance() {

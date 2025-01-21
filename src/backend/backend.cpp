@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <headers/DigitArtBuild.h>
+#include <headers/DigitsArtBuild.h>
 
 #define IMGUI_IMPL_API
 #include <3rdparty/imgui_docking/backends/imgui_impl_opengl3.h>
@@ -100,11 +100,11 @@ void Backend::PostRenderingActions() {
 void Backend::setAppTitle(const std::string& vLabel) {
     if (!vLabel.empty()) {
         char bufTitle[1024];
-        snprintf(bufTitle, 1023, "DigitArt Beta %s - %s.lum", DigitArt_BuildId, vLabel.c_str());
+        snprintf(bufTitle, 1023, "DigitArt Beta %s - %s.lum", DigitsArt_BuildId, vLabel.c_str());
         glfwSetWindowTitle(m_MainWindowPtr, bufTitle);
     } else {
         char bufTitle[1024];
-        snprintf(bufTitle, 1023, "DigitArt Beta %s", DigitArt_BuildId);
+        snprintf(bufTitle, 1023, "DigitArt Beta %s", DigitsArt_BuildId);
         glfwSetWindowTitle(m_MainWindowPtr, bufTitle);
     }
 }
