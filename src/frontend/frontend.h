@@ -37,7 +37,7 @@ private:
     ImCanvas m_canvas;
     bool m_firstDraw = true;
     bool m_drawGrid = true;
-    bool m_drawScales = true;
+    bool m_drawScales = false;
 
 public:
     static bool sCentralWindowHovered;

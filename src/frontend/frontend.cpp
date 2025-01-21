@@ -141,30 +141,14 @@ void Frontend::m_drawMainMenuBar() {
 
             ImGui::EndMenu();
         }
-
-        const auto label = ez::str::toStr("Dear ImGui %s (Docking)", ImGui::GetVersion());
-        const auto size = ImGui::CalcTextSize(label.c_str());
-
-        Controller::Instance()->drawInput(ImGui::GetContentRegionAvail().x - size.x - ImGui::GetStyle().FramePadding.x * 2.0f);
-
-        ImGui::Text("%s", label.c_str());
-
+        Controller::Instance()->drawInput(ImGui::GetContentRegionAvail().x);
         ImGui::EndMainMenuBar();
     }
 }
 
 void Frontend::m_drawMainStatusBar() {
     if (ImGui::BeginMainStatusBar()) {
-        Messaging::Instance()->DrawStatusBar();
-
-#ifdef _DEBUG
-        const auto &io = ImGui::GetIO();
-        const auto fps = ez::str::toStr("%.1f ms/frame (%.1f fps)", 1000.0f / io.Framerate, io.Framerate);
-        const auto size = ImGui::CalcTextSize(fps.c_str());
-        ImGui::Spacing(ImGui::GetContentRegionAvail().x - size.x - ImGui::GetStyle().FramePadding.x * 2.0f);
-        ImGui::Text("%s", fps.c_str());
-#endif
-
+        Controller::Instance()->drawControl(ImGui::GetContentRegionAvail().x);
         ImGui::EndMainStatusBar();
     }
 }

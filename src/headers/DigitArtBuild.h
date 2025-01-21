@@ -1,10 +1,10 @@
 #pragma once
 
 #define DigitArt_Label "DigitArt"
-#define DigitArt_BuildNumber 17
+#define DigitArt_BuildNumber 78
 #define DigitArt_MinorNumber 1
 #define DigitArt_MajorNumber 0
-#define DigitArt_BuildId "0.1.17"
+#define DigitArt_BuildId "0.1.78"
 #define DigitArt_FigFontLabel u8R"( _____   _         _  _                    _             ___      __ 
 |  __ \ (_)       (_)| |      /\          | |           / _ \    /_ |
 | |  | | _   __ _  _ | |_    /  \    _ __ | |_  __   __| | | |    | |
