@@ -1,1 +1,1 @@
-# PeriodicDecimalArt
+# DigitsArt
