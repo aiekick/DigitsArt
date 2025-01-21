@@ -1,0 +1,19 @@
+name: Full sources
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  full_sources:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: checkout submodules
+      run : git submodule update --init --recursive 
+    - name: upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Doodloy_full_sources
+        path: .
