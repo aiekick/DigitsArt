@@ -24,6 +24,8 @@
 #include <ezlibs/ezFile.hpp>
 #include <frontend/frontend.h>
 
+#include <core/controller.h>
+
 // we include the cpp just for embedded fonts
 #include <res/fontIcons.cpp>
 #include <res/robotoMedium.cpp>
@@ -345,10 +347,13 @@ bool Backend::m_InitImGui() {
 }
 
 bool Backend::m_InitSystems() {
-    return true;    
+    bool ret = true;
+    ret &= Controller::Instance()->init();
+    return ret;
 }
 
 void Backend::m_UnitSystems() {
+    Controller::Instance()->unit();
 }
 
 void Backend::m_UnitImGui() {

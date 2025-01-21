@@ -1,18 +1,22 @@
 #include "controller.h"
 #include <cmath>
+#include <ostream>
 #include <ezlibs/ezTools.hpp>
 #include <ezlibs/ezExpr.hpp>
 
+bool Controller::init() {
+    return m_evalExpr("1/7");
+}
+
+void Controller::unit() {
+
+}
+
 bool Controller::drawInput(float vMaxWidth) {
     if (m_expr.DisplayInputText(vMaxWidth, "", "1/7")) {
-        ez::Expr ev;
-        try {
-            auto num = ev.parse(m_expr.GetText()).eval().getResult();
-            m_points = m_computePointsFromNumDigits(num);
-        } catch (const std::exception &ex) {
-            LogVarError("ezExpr :parsing error : %s", ex.what());
-        }
+        return m_evalExpr(m_expr.GetText());
     }
+    return false;
 }
 
 void Controller::drawPoints() {
@@ -29,6 +33,18 @@ void Controller::drawPoints() {
             lpt = pt;
         }
     }
+}
+
+bool Controller::m_evalExpr(const std::string &vExpr) {
+    try {
+        ez::Expr ev;
+        auto num = ev.parse(vExpr).eval().getResult();
+        m_points = m_computePointsFromNumDigits(num);
+        return true;
+    } catch (const std::exception &ex) {
+        //  LogVarError("ezExpr :parsing error : %s", ex.what());
+    }
+    return false;
 }
 
 P2dArray Controller::m_computePointsFromNumDigits(double vNum) {
@@ -54,15 +70,15 @@ P2dArray Controller::m_computePointsFromNumDigits(const IntArray &vDigits) {
 IntArray Controller::m_getDecimalPartAsIntArray(double vNum) {
     IntArray ret;
     if (vNum != 0.0) {
-        double intPart;
-        double fracPart = modf(vNum, &intPart);
-        std::string fracStr = std::to_string(fracPart);
-        size_t start = fracStr.find('.');
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(100) << vNum;
+        std::string str = oss.str();
+        size_t start = str.find('.');
         if (start != std::string::npos) {
             ++start;// +1 for jump the . of 0.
-            for (size_t i = start; i < fracStr.size(); ++i) {
-                if (std::isdigit(fracStr[i])) {
-                    ret.push_back(fracStr[i] - '0');
+            for (size_t i = start; i < str.size(); ++i) {
+                if (std::isdigit(str[i])) {
+                    ret.push_back(str[i] - '0');
                 }
             }
         }

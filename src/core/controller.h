@@ -13,9 +13,12 @@ private:
     std::vector<ImVec2> m_points;
 
 public:
+    bool init();
+    void unit();
     bool drawInput(float vMaxWidth);
     void drawPoints();
 private:
+    bool m_evalExpr(const std::string& vExpr);
     static P2dArray m_computePointsFromNumDigits(double vNum);
     static P2dArray m_computePointsFromNumDigits(const IntArray& vDigits);
     static IntArray m_getDecimalPartAsIntArray(double vNum);

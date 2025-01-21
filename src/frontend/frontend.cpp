@@ -187,9 +187,7 @@ void Frontend::m_drawCanvas() {
                 m_canvas.getViewRef().set(content_size * 0.5f, 1.0f);
                 m_firstDraw = false;
             }
-            auto *draw_list_ptr = ImGui::GetWindowDrawList();
-            if (draw_list_ptr != nullptr) {
-            }
+            Controller::Instance()->drawPoints();
             m_canvas.end();
         }
     }
