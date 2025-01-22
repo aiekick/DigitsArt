@@ -15,5 +15,5 @@ jobs:
     - name: upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Doodloy_full_sources
+        name: DigitArt_full_sources
         path: .
