@@ -11,7 +11,7 @@
 #include <ezlibs/ezLog.hpp>
 #include <ezlibs/ezFigFont.hpp> 
 
-#include <headers/customMessagingConfigHeader.h>
+#include <headers/customMessagingConfigHeader.h> 
 
 // messaging
 #define MESSAGING_CODE_INFOS 0
